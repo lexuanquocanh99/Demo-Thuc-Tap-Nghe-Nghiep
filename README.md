@@ -1,5 +1,6 @@
 # Demo-Thuc-Tap-Nghe-Nghiep
 Demo thực tập nghề nghiệp - Lê Xuân Quốc Anh (DTC175524801030008) - KTPMK16A - Trường Đại Học CNTT &amp;TT
+
 Đề tài: Xây dựng website bán điện thoại cho cửa hàng Hòa Hồng Mobile.
 
 Cài đặt demo:
@@ -11,3 +12,7 @@ Yêu cầu: XAMPP Apache, PHP 7.3, MySQL, Composer 2
 5. Chạy lệnh php artisan key:generate
 6. Tiếp đó chạy lệnh php artisan storage:link
 7. Sau đó chạy php artisan serve để chạy demo
+
+Thông tin đăng nhập:
+user: user@gmail.com/123456
+admin: admin@gmail.com/Admin123
