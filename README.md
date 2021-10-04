@@ -9,4 +9,5 @@ Yêu cầu: XAMPP Apache, PHP 7.3, MySQL, Composer 2
 3. Chạy lệnh composer install
 4. Sửa thông tin kết nối CSDL tại file env.php
 5. Chạy lệnh php artisan key:generate
-6. Sau đó chạy php artisan serve để chạy demo
+6. Tiếp đó chạy lệnh php artisan storage:link
+7. Sau đó chạy php artisan serve để chạy demo
