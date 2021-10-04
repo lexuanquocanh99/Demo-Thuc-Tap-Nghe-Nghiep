@@ -1,0 +1,227 @@
+@extends('store.layouts.master')
+@section('title','HOA HONG MOBILE || GIỎ HÀNG')
+@section('main-content')
+    <!-- Breadcrumbs -->
+    <div class="breadcrumbs">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="bread-inner">
+                        <ul class="bread-list">
+                            <li><a href="{{('home')}}">Trang chủ<i class="ti-arrow-right"></i></a></li>
+                            <li class="active"><a href="#">Giỏ hàng</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Breadcrumbs -->
+
+    <!-- Shopping Cart -->
+    <div class="shopping-cart section">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <!-- Shopping Summery -->
+                    <table class="table shopping-summery">
+                        <thead>
+                        <tr class="main-hading">
+                            <th>SẢN PHẨM</th>
+                            <th>TÊN</th>
+                            <th class="text-center">GIÁ</th>
+                            <th class="text-center">SỐ LƯỢNG</th>
+                            <th class="text-center">TỔNG TIỀN</th>
+                            <th class="text-center"><i class="ti-trash remove-icon"></i></th>
+                        </tr>
+                        </thead>
+                        <tbody id="cart_item_list">
+                        <form action="{{route('cart.update')}}" method="POST">
+                            @csrf
+                            @if(Helper::getAllProductFromCart())
+                                @foreach(Helper::getAllProductFromCart() as $key=>$cart)
+                                    <tr>
+                                        @php
+                                            $photo=explode(',',$cart->product['photo']);
+                                            if (isset($cart->product_variant_id)) {
+                                                $product_variant = DB::table('product_variants')->where('id',$cart->product_variant_id)->get();
+                                            }
+                                        @endphp
+                                        <td class="image" data-title="No"><img src="{{asset('storage/'.$photo[0])}}" alt="{{$photo[0]}}"></td>
+                                        <td class="product-des" data-title="Description">
+                                            <p class="product-name"><a href="{{route('product-detail',$cart->product['slug'])}}" target="_blank">{{$cart->product['title']}} @if(isset($product_variant) && ($cart->product['id'] == $product_variant[0]->product_id)) {{str_replace(',','-',$product_variant[0]->key)}} @endif</a></p>
+                                            <p class="product-des">{!!($cart['summary']) !!}</p>
+                                        </td>
+                                        <td class="price" data-title="Price"><span>{{number_format($cart['price'])}}₫</span></td>
+                                        <td class="qty" data-title="Qty"><!-- Input Order -->
+                                            <div class="input-group">
+                                                <div class="button minus">
+                                                    <button type="button" class="btn btn-primary btn-number minus" disabled="disabled" data-type="minus" data-field="cart[{{$cart->id}}][quant]">
+                                                        <i class="ti-minus"></i>
+                                                    </button>
+                                                </div>
+                                                <input type="text" name="cart[{{$cart->id}}][quant]" class="input-number" data-min="1" data-max="100" value="{{$cart->quantity}}">
+                                                <input type="hidden" name="cart[{{$cart->id}}][qty_id]" value="{{$cart->id}}">
+                                                <input type="hidden" name="cart[{{$cart->id}}][product_id]" value="{{$cart->product['id']}}">
+                                                @if(isset($product_variant) && ($cart->product['id'] == $product_variant[0]->product_id))
+                                                <input type="hidden" name="cart[{{$cart->id}}][product_variant_key]" value="{{$product_variant[0]->key}}">
+                                                @endif
+                                                <div class="button plus">
+                                                    <button type="button" class="btn btn-primary btn-number plus" data-type="plus" data-field="cart[{{number_format($cart->id)}}][quant]">
+                                                        <i class="ti-plus"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <!--/ End Input Order -->
+                                        </td>
+                                        <td class="total-amount cart_single_price" id="{{$cart->id}}_total" data-title="Total"><span class="money">{{number_format($cart['amount'])}}₫</span></td>
+
+                                        <td class="action" data-title="Remove"><a href="{{route('cart-delete',$cart->id)}}"><i class="ti-trash remove-icon"></i></a></td>
+                                    </tr>
+                                @endforeach
+                                <track>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td class="float-right">
+                                    <button class="btn float-right" type="submit">Cập nhập</button>
+                                </td>
+                                </track>
+                            @else
+                                <tr>
+                                    <td class="text-center">
+                                        Giỏ hàng không có sản phẩm nào. <a href="{{route('product-grids')}}" style="color:blue;">Tiếp tục mua hàng</a>
+                                    </td>
+                                </tr>
+                            @endif
+
+                        </form>
+                        </tbody>
+                    </table>
+                    <!--/ End Shopping Summery -->
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <!-- Total Amount -->
+                    <div class="total-amount">
+                        <div class="row">
+                            <div class="col-lg-8 col-md-5 col-12">
+                                <div class="left">
+                                    <div class="coupon">
+                                        <form action="{{route('coupon-store')}}" method="POST">
+                                            @csrf
+                                            <input name="code" placeholder="Nhập mã giảm giá">
+                                            <button class="btn">Áp dụng</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-7 col-12">
+                                <div class="right">
+                                    <ul>
+                                        <li class="order_subtotal" data-price="{{Helper::totalCartPrice()}}">Tổng<span>{{number_format(Helper::totalCartPrice())}}₫</span></li>
+                                        <div id="shipping" style="display:none;">
+                                            <li class="shipping">
+                                                Vận chuyển {{session('shipping_price')}}
+                                                @if(count(Helper::shipping())>0 && Helper::cartCount()>0)
+                                                    <div class="form-select">
+                                                        <select name="shipping" class="nice-select">
+                                                            <option value="">Chọn</option>
+                                                            @foreach(Helper::shipping() as $shipping)
+                                                            <option value="{{$shipping->id}}" class="shippingOption" data-price="{{$shipping->price}}">{{$shipping->type}}: {{$shipping->price}}₫</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                @else
+                                                    <div class="form-select">
+                                                        <span>Miễn phí</span>
+                                                    </div>
+                                                @endif
+                                            </li>
+                                        </div>
+                                        {{-- {{dd(Session::get('coupon')['value'])}} --}}
+                                        @if(session()->has('coupon'))
+                                            <li class="coupon_price" data-price="{{Session::get('coupon')['value']}}">Giảm<span>{{number_format(Session::get('coupon')['value'])}}₫</span></li>
+                                        @endif
+                                        @php
+                                            $total_amount=Helper::totalCartPrice();
+                                            if(session()->has('coupon')){
+                                                $total_amount=$total_amount-Session::get('coupon')['value'];
+                                            }
+                                        @endphp
+                                        @if(session()->has('coupon'))
+                                            <li class="last" id="order_total_price">Thành tiền<span>{{number_format($total_amount)}}₫</span></li>
+                                        @else
+                                            <li class="last" id="order_total_price">Thành tiền<span>{{number_format($total_amount)}}₫</span></li>
+                                        @endif
+                                    </ul>
+                                    <div class="button5">
+                                        <a href="{{route('checkout')}}" class="btn">Thanh toán</a>
+                                        <a href="{{route('product-grids')}}" class="btn">Tiếp tục mua hàng</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--/ End Total Amount -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--/ End Shopping Cart -->
+@endsection
+@push('styles')
+    <style>
+        li.shipping{
+            display: inline-flex;
+            width: 100%;
+            font-size: 14px;
+        }
+        li.shipping .input-group-icon {
+            width: 100%;
+            margin-left: 10px;
+        }
+        .input-group-icon .icon {
+            position: absolute;
+            left: 20px;
+            top: 0;
+            line-height: 40px;
+            z-index: 3;
+        }
+        .form-select {
+            height: 30px;
+            width: 100%;
+        }
+        .form-select .nice-select {
+            border: none;
+            border-radius: 0px;
+            height: 40px;
+            background: #f6f6f6 !important;
+            padding-left: 45px;
+            padding-right: 40px;
+            width: 100%;
+        }
+        .list li{
+            margin-bottom:0 !important;
+        }
+        .list li:hover{
+            background:#F7941D !important;
+            color:white !important;
+        }
+        .form-select .nice-select::after {
+            top: 14px;
+        }
+    </style>
+@endpush
+@push('scripts')
+    <script src="{{asset('frontend/js/nice-select/js/jquery.nice-select.min.js')}}"></script>
+    <script src="{{ asset('frontend/js/select2/js/select2.min.js') }}"></script>
+    <script>
+        $(document).ready(function() { $("select.select2").select2(); });
+        $('select.nice-select').niceSelect();
+    </script>
+
+@endpush
