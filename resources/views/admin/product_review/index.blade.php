@@ -60,7 +60,7 @@
                                         @endfor
                                     </ul>
                                 </td>
-                                <td>{{$review->created_at->format('M d D, Y g: i a')}}</td>
+                                <td>{{$review->created_at->format('d/m/Y H:m:i')}}</td>
                                 <td>
                                     @if($review->status=='active')
                                         <span class="badge badge-success">{{$review->status}}</span>

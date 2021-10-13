@@ -135,8 +135,9 @@
                                                 $attrVlArrs[] = $attribute_value_id->attribute_value_id;
                                             }
                                         @endphp
-                                        <div class="row justify-content-md-center">
-                                            @foreach($attributes as $attribute)
+                                        <div class="row">
+                                            <div class="col">
+                                                @foreach($attributes as $attribute)
                                                 @foreach($attrArrs as $attrArr)
                                                     @if($attribute->id == $attrArr)
                                                         @php
@@ -164,6 +165,7 @@
                                                     @endif
                                                 @endforeach
                                             @endforeach
+                                            </div>
                                         </div>
                                         <br>
                                         @endif

@@ -22,7 +22,7 @@
                     </div>
                 </div>
                 <div>
-                    <div class="small text-gray-500">{{$notification->created_at->format('F d, Y h:i A')}}</div>
+                    <div class="small text-gray-500">{{$notification->created_at->format('d/m/Y H:m:i')}}</div>
                     <span class="@if($notification->unread()) font-weight-bold @else small text-gray-500 @endif">{{$notification->data['title']}}</span>
                 </div>
             </a>

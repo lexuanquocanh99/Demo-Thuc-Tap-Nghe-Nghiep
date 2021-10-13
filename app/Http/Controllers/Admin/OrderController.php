@@ -177,6 +177,19 @@ class OrderController extends Controller
                 }
             }
         }
+        if ($order->status == 'delivered' && ($request->status=='process' || $request->status=='cancel')){
+            foreach($order->cart as $cart){
+                if (isset($cart->product_variant_id)) {
+                    $product_variant = $cart->product_variant;
+                    $product_variant->stock += $cart->quantity;
+                    $product_variant->save();
+                } else {
+                    $product=$cart->product;
+                    $product->stock += $cart->quantity;
+                    $product->save();
+                }
+            }
+        }
         $status=$order->fill($data)->save();
         if($status){
             request()->session()->flash('success','Đơn hàng đã được cập nhập');
@@ -233,7 +246,7 @@ class OrderController extends Controller
         }
         $data=[];
         for($i=1; $i <=12; $i++){
-            $monthName=date('F', mktime(0,0,0,$i,1));
+            $monthName = __(\Carbon\Carbon::now()->setMonth($i)->format('F'));
             $data[$monthName] = (!empty($result[$i]))? number_format((float)($result[$i]), 2, '.', '') : 0.0;
         }
         return $data;

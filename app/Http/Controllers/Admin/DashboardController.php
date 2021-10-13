@@ -23,7 +23,7 @@ class DashboardController extends Controller
             $array[] = ['Name', 'Number'];
             foreach($data as $key => $value)
             {
-                $array[++$key] = [$value->day_name, $value->count];
+                $array[++$key] = [__($value->day_name), $value->count];
             }
             return view('admin.dashboard')->with('users', json_encode($array));
         } else {

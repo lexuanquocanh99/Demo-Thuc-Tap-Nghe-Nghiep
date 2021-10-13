@@ -100,7 +100,7 @@
                                         </tr>
                                         <tr>
                                             <td>Ngày mua hàng</td>
-                                            <td> : {{$order->created_at->format('D d M, Y')}} at {{$order->created_at->format('g : i a')}} </td>
+                                            <td> : {{$order->created_at->format('d/m/Y H:m:i')}}</td>
                                         </tr>
                                         <tr>
                                             <td>Số lượng</td>
@@ -108,15 +108,17 @@
                                         </tr>
                                         <tr>
                                             <td>Trạng thái</td>
-                                            @if($order->status=='new')
-                                                <span class="badge badge-primary">: Mới</span>
-                                            @elseif($order->status=='process')
-                                                <span class="badge badge-warning">: Đang Xử Lý</span>
-                                            @elseif($order->status=='delivered')
-                                                <span class="badge badge-success">: Đã Vận Chuyển</span>
-                                            @else
-                                                <span class="badge badge-danger">: Huỷ</span>
-                                            @endif
+                                            <td>:
+                                                @if($order->status=='new')
+                                                    <span class="badge badge-primary"> Mới</span>
+                                                @elseif($order->status=='process')
+                                                    <span class="badge badge-warning"> Đang Xử Lý</span>
+                                                @elseif($order->status=='delivered')
+                                                    <span class="badge badge-success"> Đã Vận Chuyển</span>
+                                                @else
+                                                    <span class="badge badge-danger"> Huỷ</span>
+                                                @endif
+                                            </td>
                                         </tr>
                                         <tr>
                                             @php
